@@ -1,4 +1,3 @@
-
 /*
 ===============================
 ✅ React Grid Project Checklist
@@ -46,19 +45,25 @@
 ===============================
 */
 
-
-
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
 
 const App = () => {
-  const [rows,setRows] = useState([])
+  const [rows, setRows] = useState([]);
+  let addRow = () => {
+    setRows([
+      ...rows,
+      {
+        id: rows.length + 1,
+      },
+    ]);
+  };
   return (
     <div className="app">
       <h1 className="title">Grid Maker</h1>
       <Table rows={rows} />
-      <AddButton />
+      <AddButton addRow={addRow} />
       <AddColumn />
       <RemoveRow />
       <RemoveColumn />
@@ -66,35 +71,24 @@ const App = () => {
       <FillGrid />
       <ClearGrid />
       <FillEmptyCells />
-
-
-
     </div>
   );
 };
 
-const AddButton = () => {
-  return (
-    <button>Add Row</button>
-  );
+const AddButton = (addRow) => {
+  return <button onClick={addRow}>Add Row</button>;
 };
 
 const AddColumn = () => {
-  return (
-    <button>Add Column</button>
-  );
+  return <button>Add Column</button>;
 };
 
 const RemoveRow = () => {
-  return (
-    <button>Remove Row</button>
-  );
+  return <button>Remove Row</button>;
 };
 
 const RemoveColumn = () => {
-  return (
-    <button>Remove Column</button>
-  );
+  return <button>Remove Column</button>;
 };
 
 const ColorChoice = () => {
@@ -107,7 +101,7 @@ const ColorChoice = () => {
 };
 
 const Table = (props) => {
-  const {rows} = props;
+  const { rows } = props;
   return (
     <table className="table">
       <tbody>
@@ -132,22 +126,14 @@ const Table = (props) => {
 };
 
 const FillGrid = () => {
-  return (
-    <button>Fill Grid</button>
-  );
+  return <button>Fill Grid</button>;
 };
 const ClearGrid = () => {
-  return (
-    <button>Clear Grid</button>
-  );
+  return <button>Clear Grid</button>;
 };
 const FillEmptyCells = () => {
-  return (
-    <button>Fill Empty Cells</button>
-  );
+  return <button>Fill Empty Cells</button>;
 };
-
-
 
 const root = createRoot(document.getElementById("root"));
 root.render(<App />);
