@@ -48,19 +48,25 @@
 
 
 
-import React from "react";
+import React, {useState} from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
 
 const App = () => {
+  const [rows,setRows] = useState([])
   return (
     <div className="app">
       <h1 className="title">Grid Maker</h1>
+      <Table rows={rows} />
       <AddButton />
       <AddColumn />
       <RemoveRow />
       <RemoveColumn />
       <ColorChoice />
+      <FillGrid />
+      <ClearGrid />
+      <FillEmptyCells />
+
 
 
     </div>
@@ -69,37 +75,77 @@ const App = () => {
 
 const AddButton = () => {
   return (
-   <button id="add-row">Add Row</button> 
+    <button>Add Row</button>
   );
 };
 
 const AddColumn = () => {
   return (
-    <button id="add=column">Add Column</button>
+    <button>Add Column</button>
   );
 };
 
 const RemoveRow = () => {
   return (
-    <button id="remove-row">Remove Row</button>
+    <button>Remove Row</button>
   );
 };
 
 const RemoveColumn = () => {
   return (
-    <button id="remove-column">Remove Column</button>
+    <button>Remove Column</button>
   );
 };
 
 const ColorChoice = () => {
   return (
-    <select id="color-select">
-          <option value="red">Red</option>
-          <option value="blue">Blue</option>
-        </select>
+    <select>
+      <option value="red">Red</option>
+      <option value="blue">Blue</option>
+    </select>
   );
 };
 
+const Table = (props) => {
+  const {rows} = props;
+  return (
+    <table className="table">
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+const FillGrid = () => {
+  return (
+    <button>Fill Grid</button>
+  );
+};
+const ClearGrid = () => {
+  return (
+    <button>Clear Grid</button>
+  );
+};
+const FillEmptyCells = () => {
+  return (
+    <button>Fill Empty Cells</button>
+  );
+};
 
 
 
