@@ -25,14 +25,48 @@ body {
   min-height: 100vh;
 }
 
-.table {
-  display: flex;
-  align-items: center;
-  min-height: 100px;
-}
-
 td {
   width: 20px;
   height: 20px;
   background-color: #ffffff;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem; 
+  margin: 1.5rem 0; 
+}
+
+.controls button,
+.controls select {
+  padding: 0.5rem 1rem;
+  background-color: #ffd54f;
+  border: 2px solid #ffffff;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2a7b9b;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.controls button:hover,
+.controls select:focus {
+  background-color: #ffca28;
+  color: #1f5c72;
+  outline: none;
+}
+
+.table {
+  margin: 0 auto 1rem;
+  border-collapse: collapse;
+}
+
+td {
+  width: 40px;
+  height: 40px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
 }
