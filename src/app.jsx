@@ -1,187 +1,198 @@
 /*
-============================
-React Grid Project Checklist
-============================
+===============================
+✅ React Grid Project Checklist
+===============================
 
-User Stories: 
+🔧 SETUP
+[✅] Fork the Starting Point repo (one person).
+[✅] Add all group members as collaborators.
+[✅] Ensure every member commits and pushes to the forked repo.
+[✅] Install React Developer Tools in Chrome:
+    https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en
+[ ] Deploy project to GitHub Pages:
+    https://codeburst.io/deploy-react-to-github-pages-to-create-an-amazing-website-42d8b09cd4d
 
-[ done ] add rows to the grid
-[ done ] add columns to the grid
-[ done ] remove rows from the grid
-[ done ] remove columns from the grid
-[ done ] select a color from a dropdown menu of colors
-[ done ] click on a single cell, changing its color to the currently selected color
-[ done ] fill all uncolored cells with the currently selected color
-[ done ] fill all cells with the currently selected color
-[ done ] clear all cells/restore all cells to their original/initial color
-[ done ] click and hold (mouseover) from a single cell (start) to a different cell (end) such that all affected/hovered-over cells from start to end change to the currently selected color
- 
+📦 COMPONENT STRUCTURE
+[✅] Create App.jsx
+      - Manages state: grid, selectedColor
+      - Contains methods: addRow(), addColumn(), setColor(), etc.
+      - Renders dropdown & <Table />
+[ ] Create components:
+      - Table.jsx → parent of TableRow.jsx
+      - TableRow.jsx → parent of TableCell.jsx
+      - TableCell.jsx → receives color, click handler
+
+🧩 MVP FEATURES (Required)
+[✅]] User can add rows to the grid
+[✅]] User can add columns to the grid
+[✅]] User can select a color from a dropdown menu
+[✅]] User can click a single cell to change its color
+
+🌟 STRETCH FEATURES (Optional)
+[✅]] User can remove rows from the grid
+[✅]] User can remove columns from the grid
+[✅]] User can fill all uncolored cells with the selected color
+[✅]] User can fill ALL cells with the selected color
+[✅]] User can clear all cells to initial color
+[✅]] User can click & drag (mouseover) to color multiple cells
+
+🧠 REMINDERS
+- Keep each component in its own file and use `export default`
+- Pass event handlers as props from parent to child
+- Use state and props instead of direct DOM manipulation
+- Use Chrome React Dev Tools to inspect component state/props
+
+===============================
 */
+
+
 
 import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
 
+
+const COLORS = ["red", "blue", "green", "yellow", "purple", "orange", "white"];
+
 const App = () => {
-  // this line was stolen from the peer repo xd
+
   const [grid, setGrid] = useState([
     ["", "", ""],
     ["", "", ""],
     ["", "", ""],
   ]);
-  const [selectedColor, setSelectedColor] = useState("red");
-  const [isMouseDown, setIsMouseDown] = useState(false);
-
+  const [selectedColor, setSelectedColor] = useState(COLORS[0]);
   const numRows = grid.length;
-  const numCols = grid.length > 0 ? grid[0].length : 0;
-  const tableBuilder = [];
+  const numCols = grid[0]?.length || 0;
 
-  const cloneGrid = () => {
-    const copy = [];
-    for (let i = 0; i < numRows; i++) {
-      const rowCopy = [];
-      for (let j = 0; j < numCols; j++) {
-        rowCopy.push(grid[i][j]);
-      }
-      copy.push(rowCopy);
-    }
-    return copy;
-  };
 
   const addRow = () => {
-    const next = cloneGrid();
-    const newRow = Array(numCols).fill("");
-    next.push(newRow);
-    setGrid(next);
+    setGrid([...grid, Array(numCols).fill("")]);
   };
+
 
   const addColumn = () => {
-    const next = cloneGrid();
-    for (let i = 0; i < numRows; i++) next[i].push("");
-    setGrid(next);
+    setGrid(grid.map(row => [...row, ""]));
   };
 
+  
   const removeRow = () => {
-    if (numRows === 1) return;
-    const next = cloneGrid();
-    next.pop();
-    setGrid(next);
+    if (numRows > 1) setGrid(grid.slice(0, -1));
   };
 
+ 
   const removeColumn = () => {
-    if (numCols === 1) return;
-    const next = cloneGrid();
-    for (let i = 0; i < numRows; i++) next[i].pop();
-    setGrid(next);
+    if (numCols > 1) setGrid(grid.map(row => row.slice(0, -1)));
   };
 
-  const paintCell = (i, j) => {
-    const next = cloneGrid();
-    next[i][j] = selectedColor;
-    setGrid(next);
+  
+  const setCellColor = (rowIdx, colIdx) => {
+    setGrid(grid =>
+      grid.map((row, r) =>
+        row.map((cell, c) =>
+          r === rowIdx && c === colIdx ? selectedColor : cell
+        )
+      )
+    );
   };
 
+  
   const fillGrid = () => {
-    const next = [];
-    for (let i = 0; i < numRows; i++) {
-      const row = [];
-      for (let j = 0; j < numCols; j++) row.push(selectedColor);
-      next.push(row);
-    }
-    setGrid(next);
+    setGrid(grid.map(row => row.map(() => selectedColor)));
   };
 
+  
   const clearGrid = () => {
-    const next = [];
-    for (let i = 0; i < numRows; i++) {
-      const row = [];
-      for (let j = 0; j < numCols; j++) row.push("");
-      next.push(row);
-    }
-    setGrid(next);
+    setGrid(grid.map(row => row.map(() => "")));
   };
 
-  const fillEmpty = () => {
-    const next = cloneGrid();
-    for (let i = 0; i < numRows; i++) {
-      for (let j = 0; j < numCols; j++) {
-        if (next[i][j] === "") next[i][j] = selectedColor;
-      }
-    }
-    setGrid(next);
+  
+  const fillEmptyCells = () => {
+    setGrid(grid.map(row =>
+      row.map(cell => (cell === "" ? selectedColor : cell))
+    ));
   };
-
-  for (let i = 0; i < numRows; i++) {
-    const cells = [];
-    for (let j = 0; j < numCols; j++) {
-      cells.push(
-        <td
-          key={j}
-          style={{ backgroundColor: grid[i][j] || "white" }}
-          onMouseDown={() => {
-            setIsMouseDown(true);
-            paintCell(i, j);
-          }}
-          onMouseEnter={() => {
-            if (isMouseDown) paintCell(i, j);
-          }}
-        />
-      );
-    }
-    tableBuilder.push(<tr key={i}>{cells}</tr>);
-  }
 
   return (
-    <div className="app" onMouseUp={() => setIsMouseDown(false)}>
+    <div className="app">
       <h1 className="title">Grid Maker</h1>
-
-      <table className="grid">
-        <tbody>{tableBuilder}</tbody>
-      </table>
-
       <div className="controls">
-        <button id="add-row" onClick={addRow}>
-          {" "}
-          Add Row
-        </button>
-
-        <button id="add-col" onClick={addColumn}>
-          Add Column
-        </button>
-
-        <button id="remove-row" onClick={removeRow}>
-          Remove Row
-        </button>
-
-        <button id="remove-col" onClick={removeColumn}>
-          Remove Column
-        </button>
-
-        <select
-          id="color-chooser"
-          value={selectedColor}
-          onChange={(e) => setSelectedColor(e.target.value)}
-        >
-          <option value="red">Red</option>
-          <option value="blue">Blue</option>
-          <option value="">(Eraser)</option>
-        </select>
-
-        <button id="fill-all" onClick={fillGrid}>
-          Fill Grid
-        </button>
-
-        <button id="fill-empty" onClick={fillEmpty}>
-          Fill Empty Cells
-        </button>
-
-        <button id="clear" onClick={clearGrid}>
-          Clear Grid
-        </button>
+        <AddButton onClick={addRow} />
+        <AddColumn onClick={addColumn} />
+        <RemoveRow onClick={removeRow} />
+        <RemoveColumn onClick={removeColumn} />
+        <ColorChoice
+          colors={COLORS}
+          selectedColor={selectedColor}
+          setSelectedColor={setSelectedColor}
+        />
+        <FillGrid onClick={fillGrid} />
+        <ClearGrid onClick={clearGrid} />
+        <FillEmptyCells onClick={fillEmptyCells} />
       </div>
+      <Table grid={grid} setCellColor={setCellColor} />
     </div>
   );
 };
+
+const AddButton = ({ onClick }) => (
+  <button onClick={onClick}>Add Row</button>
+);
+
+const AddColumn = ({ onClick }) => (
+  <button onClick={onClick}>Add Column</button>
+);
+
+const RemoveRow = ({ onClick }) => (
+  <button onClick={onClick}>Remove Row</button>
+);
+
+const RemoveColumn = ({ onClick }) => (
+  <button onClick={onClick}>Remove Column</button>
+);
+
+const ColorChoice = ({ colors, selectedColor, setSelectedColor }) => (
+  <select
+    value={selectedColor}
+    onChange={e => setSelectedColor(e.target.value)}
+  >
+    {colors.map(color => (
+      <option key={color} value={color}>
+        {color.charAt(0).toUpperCase() + color.slice(1)}
+      </option>
+    ))}
+  </select>
+);
+
+const Table = ({ grid, setCellColor }) => (
+  <table className="table">
+    <tbody>
+      {grid.map((row, rIdx) => (
+        <tr key={rIdx}>
+          {row.map((cell, cIdx) => (
+            <td
+              key={cIdx}
+              style={{ backgroundColor: cell || "#fff", cursor: "pointer" }}
+              onClick={() => setCellColor(rIdx, cIdx)}
+            />
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
+
+const FillGrid = ({ onClick }) => (
+  <button onClick={onClick}>Fill Grid</button>
+);
+
+const ClearGrid = ({ onClick }) => (
+  <button onClick={onClick}>Clear Grid</button>
+);
+
+const FillEmptyCells = ({ onClick }) => (
+  <button onClick={onClick}>Fill Empty Cells</button>
+);
 
 const root = createRoot(document.getElementById("root"));
 root.render(<App />);
